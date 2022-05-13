@@ -19,6 +19,20 @@ body {
     margin: auto;
 }
 
+.network-div {
+    height: 90%;
+}
+
+.network-div > div {
+    visibility: visible !important;
+    height: 100%;
+}
+
+.left-div {
+    height: 90%;
+    width: 60%;
+}
+
 .info-title {
     text-align: center;
     font-size: 20px;

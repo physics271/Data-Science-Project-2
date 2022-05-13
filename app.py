@@ -6,6 +6,7 @@ import json
 from make_network import GraphDisplay
 
 network = GraphDisplay()
+loading = True
 
 external_stylesheets = [
     "https://fonts.googleapis.com/css2?family=Roboto",
@@ -24,37 +25,45 @@ app.layout = html.Div([
     ),
     html.Div([
         html.Div([
-            visdcc.Network(
-            id='net',
-            data={'nodes':[],'edges':[]},
-            options={
-                'physics':{
-                    'repulsion':{
-                        'nodeDistance': 150,
-                        'springLength': 20,
-                    },
-                    'solver':'repulsion',
-                },
-                'edges':{
-                    'arrows':'to',
-                }
-            },
-            style={
-                'height':'90%',
-                'borderColor':'#000',
-                'borderStyle':'solid',
-            }),
+            html.Div(
+                dcc.Loading(
+                    id='loading',
+                    children=[
+                        visdcc.Network(
+                            id='net',
+                            data={'nodes':[],'edges':[]},
+                            options={
+                                'physics':{
+                                    'repulsion':{
+                                        'nodeDistance': 150,
+                                        'springLength': 20,
+                                    },
+                                    'solver':'repulsion',
+                                },
+                                'edges':{
+                                    'arrows':'to',
+                                }
+                            },
+                            style={
+                                'height':'100%',
+                                'borderColor':'#000',
+                                'borderStyle':'solid',
+                            }
+                        ),
+                    ],
+                    type='dot'
+                ),
+                className='network-div'
+            ),
             html.Button('Add 1 Origin', id='add-one', n_clicks=0, className='add-button')
-        ], style={
-            'width':'60%'
-        }),
+        ], className='left-div'),
         html.Div([
             html.H2(
                 "Some Random Things",
                 className='info-title'
-            )
+            ),
         ])
-    ], className='content-columns')
+    ], className='content-columns'),
 ])
 
 @app.callback(
@@ -66,8 +75,9 @@ def update_network(clicks):
     else:
         network.add_graph()
 
-    return network.output_graph()
-    
+    data = network.output_graph()
+    return data
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

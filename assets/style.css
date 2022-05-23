@@ -1,75 +1,124 @@
 body {
-    font-family: "Roboto", sans-serif;
-    margin: 0;
-    background-color: hsl(0, 0%, 95%);
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  background-color: hsl(0, 0%, 95%);
 }
 
 .header-box {
-    width:100%;
-    background-color: #008394;
-    display: flex;
-    padding: 60px 0px 60px 0px;
+  width:100%;
+  background-color: #35e7fe;
+  display: flex;
+  padding: 40px 0px 20px 0px;
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;
+  position: relative;
 }
 
 .header-title {
-    font-weight: 300;
-    font-size: 80px;
-    color: white;
-    text-align: center;
-    margin: auto;
+  font-weight: 300;
+  font-size: 80px;
+  font-family: serif;
+  color: black;
+  text-align: center;
+  margin: auto;
 }
 
 .network-div {
-    height: 90%;
+  height: 90%;
 }
 
 .network-div > div {
-    visibility: visible !important;
-    height: 100%;
+  visibility: visible !important;
+  height: 100%;
 }
 
 .left-div {
-    height: 90%;
-    width: 60%;
+  height: 90%;
+  width: 60%;
+}
+
+.right-div {
+  width: 39%;
+  height: 90%;
+}
+
+.inputs-div {
+  display: flex;
+  flex-direction: row;
+  margin: 20px auto;
+  width: 95%;
+  align-items: start;
+  justify-content: space-between;
 }
 
 .info-title {
-    text-align: center;
-    font-size: 20px;
-    font-weight: 500;
-    color:black;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  color:black;
 }
 
 .content-columns {
-    display: flex;
-    height: 90vh;
-    flex-direction: row;
-    border-style: solid;
+  display: flex;
+  height: 90vh;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: -1px;
+}
+
+.button-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.button {
+  transition-duration: 0.4s;
+  text-align: center;
+  font-size: 16px;
+  padding: 8px;
+  border-radius: 10px;
+  cursor:pointer;
 }
 
 .add-button {
-    transition-duration: 0.4s;
-    background-color: lightgreen;
-    text-align: center;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    margin: 5px 15px;
+  background-color: lightgreen;
 }
 
 .add-button:hover {
-    background-color: green;
-    color: white;
+  background-color: green;
+  color: white;
 }
 
+.reset-button {
+  background-color: red;
+}
 
-.fade-in {
-    animation: fadeIn ease 2s;
-    -webkit-animation: fadeIn ease 2s;
-    -moz-animation: fadeIn ease 2s;
-    -o-animation: fadeIn ease 2s;
-    -ms-animation: fadeIn ease 2s;
+.reset-button:hover {
+  background-color: darkred;
+  color: white;
+}
+
+.numeric-input {
+  width: 40px;
+  font-size: 16px;
+  margin: 0px 5px;
+}
+
+.title-fade-in {
+    animation: fadeIn ease 3s;
+    -webkit-animation: fadeIn ease 3s;
+    -moz-animation: fadeIn ease 3s;
+    -o-animation: fadeIn ease 3s;
+    -ms-animation: fadeIn ease 3s;
+}
+
+.body-fade-in {
+  animation: fadeIn ease 1s;
+  -webkit-animation: fadeIn ease 1s;
+  -moz-animation: fadeIn ease 1s;
+  -o-animation: fadeIn ease 1s;
+  -ms-animation: fadeIn ease 1s;
 }
 
 @keyframes fadeIn {
@@ -114,4 +163,5 @@ body {
     }
     100% {
       opacity:1;
+    }
 }

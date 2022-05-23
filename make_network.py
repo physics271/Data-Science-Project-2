@@ -1,15 +1,18 @@
 import networkx as nx
+import plotly.express as px
+import random
 
 import scraper_functions
 
 class GraphDisplay:
-    def __init__(self):
+    def __init__(self, n):
         self.graph = nx.DiGraph()
         self.visited_pages = dict()
+        self.n = n
         self.groups = 0
 
     def make_network(self, seed_num):
-        self.visited_pages = scraper_functions.make_network(seed_num)
+        self.visited_pages = scraper_functions.make_network(seed_num, n=self.n)
 
     def make_graph(self, pages):
         G = nx.DiGraph()
@@ -23,10 +26,9 @@ class GraphDisplay:
 
         for i, cc in enumerate(connected):
             group_num += 1
-            for j, node in enumerate(cc):
+            for node in cc:
                 G.nodes[node]['group']=i
-                G.nodes[node]['x']=300*i+0.01*j
-            
+                G.nodes[node]['x']=400*i + 2*random.random()
             
         cycles = nx.simple_cycles(G)
         for cycle in cycles:
@@ -41,7 +43,7 @@ class GraphDisplay:
         self.graph, self.groups = self.make_graph(self.visited_pages)
 
     def add_graph(self, seed_url=None):
-        new_nodes, join_node = scraper_functions.add_to_network(self.visited_pages, seed=seed_url)
+        new_nodes, join_node = scraper_functions.add_to_network(self.visited_pages, seed=seed_url, n=self.n)
         self.visited_pages = dict(self.visited_pages, **new_nodes)
         new_edges = [(node, dest) for node, dest in new_nodes.items() if dest!=None]
 
@@ -63,7 +65,7 @@ class GraphDisplay:
 
             for node in new_G.nodes:
                 new_G.nodes[node]['group'] = self.groups
-                new_G.nodes[node]['x'] = 300*self.groups
+                new_G.nodes[node]['x'] = 400*self.groups
 
             union = nx.union(self.graph, new_G)
 
@@ -78,5 +80,45 @@ class GraphDisplay:
         edges = [{'id':f'{a}-{b}', 'from':a, 'to':b, **c} for a, b, c in self.graph.edges.data()]
 
         return {'nodes':nodes, 'edges':edges}
+
+    def change_n(self, n):
+        self.n = n
+        self.reset_graph()
+
+    def cycle_lens(self):
+        cycle_lens= [len(x) for x in nx.simple_cycles(self.graph)]
+        lonely_nodes = len([node for node in self.graph.nodes if self.graph.out_degree(node) == 0])
+
+        return cycle_lens, lonely_nodes
+    
+    def cycle_lens_histogram(self):
+        cycle_lens, lonely_nodes = self.cycle_lens()
+
+        cycle_lens += [0]*lonely_nodes
+        
+        n_bins = 0
+        right_side = 11
+        if cycle_lens:
+            n_bins = max(cycle_lens)-min(cycle_lens)+1
+
+            right_side = max(10, max(cycle_lens))+1
+
+        fig = px.histogram(cycle_lens, nbins=n_bins, 
+        
+        title='Histogram of Cycle Lengths<br><sub>0 represents pages without enough links</sub>')
+
+        fig.update_layout(
+            bargap=0.1, 
+            xaxis=dict(tickmode='array', tickvals=list(range(0, right_side)),
+             range=[-1, right_side], fixedrange=True),
+            yaxis=dict(fixedrange=True, dtick=1),
+            paper_bgcolor='rgba(0,0,0,0)',
+            showlegend=False,
+            hovermode=False,
+            yaxis_title='Count',
+            xaxis_title='Cycle Lengths'
+        )
+
+        return fig
 
     

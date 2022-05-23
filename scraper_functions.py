@@ -62,10 +62,10 @@ def get_nth_link(url, n=2):
 def make_network(seed_num, n=2):
     visited_pages = dict()
     for i in range(seed_num):
-        current_title, current_url, next_url = get_nth_link(random_page, n=n)
+        current_title, _, next_url = get_nth_link(random_page, n=n)
 
         node = current_title
-        print(f'New Starting Point: {current_title},    {i+1}/{seed_num}')
+        #print(f'New Starting Point: {current_title},    {i+1}/{seed_num}')
         for _ in range(100):
             if node in visited_pages:
                 #print(f'Joined network on {node}')
@@ -76,7 +76,7 @@ def make_network(seed_num, n=2):
                 visited_pages[node] = None
                 break
 
-            current_title, current_url, next_url = get_nth_link(next_url, n=n)
+            current_title, _, next_url = get_nth_link(next_url, n=n)
 
             visited_pages[node] = current_title
 
@@ -88,24 +88,26 @@ def add_to_network(visited_pages, seed=None, n=2):
     if seed == None:
         seed = random_page
     new_pages = dict()
-    current_title, current_url, next_url = get_nth_link(seed, n=n)
+    current_title, _, next_url = get_nth_link(seed, n=n)
 
     node = current_title
     for _ in range(100):
         if node in visited_pages:
             #print('END! on rejoin')
             return new_pages, node
+
+        if node in new_pages:
+            break
             
         if next_url == None:
             #print(current_url, next_url)
             new_pages[node] = None
             break
 
-        current_title, current_url, next_url = get_nth_link(next_url, n=n)
+        current_title, _, next_url = get_nth_link(next_url, n=n)
 
         new_pages[node] = current_title
 
         node = current_title
 
-    #print('END! on New')
     return new_pages, None

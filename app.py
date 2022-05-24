@@ -5,9 +5,11 @@ import visdcc
 import json
 from make_network import GraphDisplay
 
-
 with open('./assets/conclusions.txt', 'r') as f:
     conclusions = f.read().split('\n\nNEWNUMBER\n\n')
+
+with open('./assets/explanation.txt', 'r') as f:
+    explanation_text = f.read()
 
 network = GraphDisplay(n=2)
 
@@ -61,7 +63,7 @@ app.layout = html.Div([
             ),
             html.Div([
                 html.Div([
-                    html.Button('Add Starting Node', id='add-one', n_clicks=0, className='button add-button'),
+                    html.Button('Add Starting Page', id='add-one', n_clicks=0, className='button add-button'),
                     dcc.RadioItems([1,5,10], value=1, id='node-num-selector', labelStyle={'margin-right':'10px'})
                 ], className='button-box'),
                 html.Div([
@@ -76,7 +78,16 @@ app.layout = html.Div([
             html.Div(
                 "*Adding 5 or 10 nodes at a time may be slow.\n*Do not change the number of added nodes while loading.",
                 style={'padding':'0px 0px 10px 10px', 'whiteSpace': 'pre-wrap'}
-            )
+            ),
+            html.Div([
+                html.H3(
+                    "Explanation of Wikipedia-dia:"
+                ),
+                html.Div(
+                    explanation_text,
+                    style={'whiteSpace': 'pre-wrap'}
+                )
+            ], className='network-explanation')
         ], className='left-div'),
         html.Div([
             html.H2(

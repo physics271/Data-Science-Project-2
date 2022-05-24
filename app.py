@@ -1,13 +1,15 @@
 from pydoc import classname
-from dash import Dash, dcc, html, Input, Output, callback_context
-from dash.exceptions import PreventUpdate
+from dash import Dash, dcc, html, Input, Output, callback_context, no_update
 import visdcc
 
 import json
 from make_network import GraphDisplay
 
+
+with open('./assets/conclusions.txt', 'r') as f:
+    conclusions = f.read().split('\n\nNEWNUMBER\n\n')
+
 network = GraphDisplay(n=2)
-loading = True
 
 external_stylesheets = [
     "https://fonts.googleapis.com/css2?family=Roboto",
@@ -34,6 +36,7 @@ app.layout = html.Div([
                             id='net',
                             data={'nodes':[],'edges':[]},
                             options={
+                                'clickToUse': True,
                                 'physics':{
                                     'repulsion':{
                                         'nodeDistance': 150,
@@ -71,8 +74,8 @@ app.layout = html.Div([
                 html.Button('Reset Network', id='reset-network', n_clicks=0, className='button reset-button')
             ], className='inputs-div'),
             html.Div(
-                "*Adding 5 or 10 nodes at a time may be slow.",
-                style={'margin-left':'10px'}
+                "*Adding 5 or 10 nodes at a time may be slow.\n*Do not change the number of added nodes while loading.",
+                style={'padding':'0px 0px 10px 10px', 'whiteSpace': 'pre-wrap'}
             )
         ], className='left-div'),
         html.Div([
@@ -88,7 +91,8 @@ app.layout = html.Div([
                 id='cycle-histogram',
                 figure= network.cycle_lens_histogram(),
                 config={'displayModeBar': False},
-            )
+            ),
+            html.Div(id='conclusions', className='conclusions')
         ], className='right-div')
     ], className='content-columns'),
 ], className='body-fade-in')
@@ -96,25 +100,33 @@ app.layout = html.Div([
 @app.callback(
     [Output('net', 'data'),
     Output('cycles-vs-total', 'children'),
-    Output('cycle-histogram', 'figure')],
+    Output('cycle-histogram', 'figure'),
+    Output('conclusions', 'children')],
     [Input('add-one', 'n_clicks'),
     Input('node-num-selector', 'value'),
     Input('change-n', 'value'),
     Input('reset-network', 'n_clicks')])
-def update_network(clicks, num_nodes, link_num, reset_num):
+def update_network(add_one_clicks, num_nodes, link_num, reset_clicks):
     active_id = [p['prop_id'] for p in callback_context.triggered]
+
+    value = min(link_num, 4) - 1
+    text =  conclusions[value]
 
     if 'add-one.n_clicks' in active_id:
         for _ in range(num_nodes):
             network.add_graph()
+
     elif 'change-n.value' in active_id:
         network.change_n(link_num)
+
     elif 'reset-network.n_clicks' in active_id:
         network.reset_graph(num=1)
+
     elif '.' in active_id:
-        network.reset_graph()
+        network.change_n(2)
+
     else:
-        raise PreventUpdate
+        return no_update, no_update, no_update, text, 
     
     data = network.output_graph()
 
@@ -122,8 +134,7 @@ def update_network(clicks, num_nodes, link_num, reset_num):
 
     cycle_len_string = f'There are a total of {len(network.graph)} node{"s" if len(network.graph)!=1 else ""}, \
         of which {sum(cycle_lens)} are in {len(cycle_lens)} cycle{"s" if len(cycle_lens)!=1 else ""}.'
-    return data, cycle_len_string, network.cycle_lens_histogram()
-
+    return data, cycle_len_string, network.cycle_lens_histogram(), text
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)

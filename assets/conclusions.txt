@@ -1,0 +1,13 @@
+When clicking the first link on each page, almost every page eventually finds itself in a cycle of length 4, going through Latin ⭢ Classical Language ⭢ Language ⭢ Communication. That so many pages end up in this cycle suggests that the first links on Wikipedia often lead to abstraction or generalization of topics. Interestingly, the old belief that every page goes through Philosophy is seemingly false; few pages find a link to Philosophy, which itself just ends up in the aforementioned cycle.
+
+NEWNUMBER
+
+When clicking on the second link, many short cycles of length 2 or 3 exist. This seems to indicate that the second link on Wikipedia often leads to topics of similar complexity and subject, which can then lead back to one another. Interestingly, there is also a cycle of length 19 going through Language and Taxon, which covers a range of topics; this seems to happen because, even though each step in that cycle is not a big change in subject, the accumulation of small changes leads to a large swap.
+
+NEWNUMBER
+
+Clicking on the third link is similar to the case of the second link, with a seeming bias towards cycles of lengths 2. This leads to a similar conclusion as for the second link; the third link often links to topics of similar complexity, which eventually results in a small loop between two pages that interlink.
+
+NEWNUMBER
+
+Clicking on higher links is still pretty similar to the case of the third or second link, with multiple different cycles appearing. As the link number goes up, however, more and more pages will simply be dead ends for the network, as they do not have enough links to actually continue. 

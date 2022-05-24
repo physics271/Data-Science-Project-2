@@ -5,7 +5,7 @@ import random
 import scraper_functions
 
 class GraphDisplay:
-    def __init__(self, n):
+    def __init__(self, n=2):
         self.graph = nx.DiGraph()
         self.visited_pages = dict()
         self.n = n
@@ -120,5 +120,3 @@ class GraphDisplay:
         )
 
         return fig
-
-    

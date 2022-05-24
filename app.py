@@ -3,6 +3,8 @@ from dash import Dash, dcc, html, Input, Output, callback_context, no_update
 import visdcc
 
 import json
+import os
+
 from make_network import GraphDisplay
 
 with open('./assets/conclusions.txt', 'r') as f:
@@ -19,6 +21,8 @@ external_stylesheets = [
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'Wikipedia-dia'
+
+server = app.server
 
 app.layout = html.Div([
     html.Div([

@@ -18,7 +18,7 @@ def read_page(url):
 
 def get_nth_link(url, n=2):
     tree, page_url = read_page(url)
-    
+
     # Needed in case title is italic
     title = ''.join(tree.xpath('//*[@id="firstHeading"]')[0].itertext())
 

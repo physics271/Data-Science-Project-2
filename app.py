@@ -123,6 +123,7 @@ app.layout = html.Div([
     Input('reset-network', 'n_clicks')])
 def update_network(add_one_clicks, num_nodes, link_num, reset_clicks):
     active_id = [p['prop_id'] for p in callback_context.triggered]
+    print(active_id)
 
     value = min(link_num, 4) - 1
     text =  conclusions[value]

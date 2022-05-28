@@ -5,14 +5,19 @@ import random
 import scraper_functions
 
 class GraphDisplay:
-    def __init__(self, n=2):
-        self.graph = nx.DiGraph()
-        self.visited_pages = dict()
+    def __init__(self, n, cached_data, starting_nodes=3):
         self.n = n
-        self.groups = 0
 
-    def make_network(self, seed_num):
-        self.visited_pages = scraper_functions.make_network(seed_num, n=self.n)
+        if cached_data:
+            self.graph = nx.node_link_graph(cached_data['graph'])
+            self.visited_pages = cached_data['pages']
+            self.groups = cached_data['groups']
+        else:
+            self.graph = nx.DiGraph()
+            self.visited_pages = dict()
+            self.groups = 0
+
+            self.reset_graph(num = starting_nodes)
 
     def make_graph(self, pages):
         G = nx.DiGraph()
@@ -28,7 +33,7 @@ class GraphDisplay:
             group_num += 1
             for node in cc:
                 G.nodes[node]['group']=i
-                G.nodes[node]['x']=400*i + 2*random.random()
+                G.nodes[node]['x']=300*i + 2*random.random()
             
         cycles = nx.simple_cycles(G)
         for cycle in cycles:
@@ -39,7 +44,7 @@ class GraphDisplay:
         return G, group_num
 
     def reset_graph(self, num=3):
-        self.make_network(num)
+        self.visited_pages = scraper_functions.make_network(num, n=self.n)
         self.graph, self.groups = self.make_graph(self.visited_pages)
 
     def add_graph(self, seed_url=None):
@@ -65,7 +70,7 @@ class GraphDisplay:
 
             for node in new_G.nodes:
                 new_G.nodes[node]['group'] = self.groups
-                new_G.nodes[node]['x'] = 400*self.groups
+                new_G.nodes[node]['x'] = 300*self.groups
 
             union = nx.union(self.graph, new_G)
 
@@ -80,10 +85,6 @@ class GraphDisplay:
         edges = [{'id':f'{a}-{b}', 'from':a, 'to':b, **c} for a, b, c in self.graph.edges.data()]
 
         return {'nodes':nodes, 'edges':edges}
-
-    def change_n(self, n):
-        self.n = n
-        self.reset_graph()
 
     def cycle_lens(self):
         cycle_lens= [len(x) for x in nx.simple_cycles(self.graph)]
@@ -120,3 +121,29 @@ class GraphDisplay:
         )
 
         return fig
+
+    def return_cache(self):
+        cached_graph = nx.node_link_data(self.graph)
+
+        cache = {
+            'graph': cached_graph, 
+            'pages': self.visited_pages,
+            'groups': self.groups
+        }
+
+        return cache
+
+
+empty_histogram = px.scatter(title='Histogram of Cycle Lengths<br><sub>0 represents pages without enough links</sub>')
+
+empty_histogram.update_layout(
+    bargap=0.1, 
+    xaxis=dict(tickmode='array', tickvals=list(range(0, 11)),
+     range=[-1, 11], fixedrange=True),
+    yaxis=dict(fixedrange=True, dtick=1),
+    paper_bgcolor='rgba(0,0,0,0)',
+    showlegend=False,
+    hovermode=False,
+    yaxis_title='Count',
+    xaxis_title='Cycle Lengths'
+)

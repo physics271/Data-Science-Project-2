@@ -5,7 +5,7 @@ import visdcc
 import json
 import os
 
-from make_network import GraphDisplay
+from make_network import GraphDisplay, empty_histogram
 
 with open('./assets/conclusions.txt', 'r') as f:
     conclusions = f.read().split('\n\nNEWNUMBER\n\n')
@@ -13,11 +13,10 @@ with open('./assets/conclusions.txt', 'r') as f:
 with open('./assets/explanation.txt', 'r') as f:
     explanation_text = f.read()
 
-network = GraphDisplay(n=2)
-
 external_stylesheets = [
     "https://fonts.googleapis.com/css2?family=Roboto",
 ]
+
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = 'Wikipedia-dia'
@@ -80,8 +79,8 @@ app.layout = html.Div([
                 html.Button('Reset Network', id='reset-network', n_clicks=0, className='button reset-button')
             ], className='inputs-div'),
             html.Div(
-                "*Adding 5 or 10 nodes at a time may be slow.\n*Do not change the number of added nodes while loading.",
-                style={'padding':'0px 0px 10px 10px', 'whiteSpace': 'pre-wrap'}
+                "*Adding 5 or 10 nodes at a time may be slow.\n*Do not change the number of added nodes while loading. It can break the network.",
+                className='warnings-box'
             ),
             html.Div([
                 html.H3(
@@ -104,44 +103,48 @@ app.layout = html.Div([
             ),
             dcc.Graph(
                 id='cycle-histogram',
-                figure= network.cycle_lens_histogram(),
+                figure= empty_histogram,
                 config={'displayModeBar': False},
             ),
             html.Div(id='conclusions', className='conclusions')
         ], className='right-div')
     ], className='content-columns'),
+    dcc.Store(data = False, id='cached-graph')
 ], className='body-fade-in')
 
 @app.callback(
     [Output('net', 'data'),
     Output('cycles-vs-total', 'children'),
     Output('cycle-histogram', 'figure'),
-    Output('conclusions', 'children')],
+    Output('conclusions', 'children'),
+    Output('cached-graph', 'data')],
     [Input('add-one', 'n_clicks'),
     Input('node-num-selector', 'value'),
     Input('change-n', 'value'),
-    Input('reset-network', 'n_clicks')])
-def update_network(add_one_clicks, num_nodes, link_num, reset_clicks):
+    Input('reset-network', 'n_clicks'),
+    Input('cached-graph', 'data')])
+def update_network(add_one_clicks, num_nodes, link_num, reset_clicks, cached_data):
     active_id = [p['prop_id'] for p in callback_context.triggered]
 
     value = min(link_num, 4) - 1
     text =  conclusions[value]
 
     if 'add-one.n_clicks' in active_id:
+        network = GraphDisplay(n=link_num, cached_data=cached_data)
         for _ in range(num_nodes):
             network.add_graph()
 
     elif 'change-n.value' in active_id:
-        network.change_n(link_num)
+        network = GraphDisplay(n=link_num, cached_data=False)
 
     elif 'reset-network.n_clicks' in active_id:
-        network.reset_graph(num=1)
+        network = GraphDisplay(n=link_num, cached_data=False, starting_nodes=1)
 
     elif '.' in active_id:
-        network.change_n(2)
+        network = GraphDisplay(n=link_num, cached_data=False)
 
     else:
-        return no_update, no_update, no_update, text, 
+        return no_update, no_update, no_update, text, no_update
     
     data = network.output_graph()
 
@@ -149,7 +152,7 @@ def update_network(add_one_clicks, num_nodes, link_num, reset_clicks):
 
     cycle_len_string = f'There are a total of {len(network.graph)} node{"s" if len(network.graph)!=1 else ""}, \
         of which {sum(cycle_lens)} are in {len(cycle_lens)} cycle{"s" if len(cycle_lens)!=1 else ""}.'
-    return data, cycle_len_string, network.cycle_lens_histogram(), text
+    return data, cycle_len_string, network.cycle_lens_histogram(), text, network.return_cache()
 
 if __name__ == '__main__':
     app.run(debug=True)

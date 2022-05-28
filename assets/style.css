@@ -29,6 +29,12 @@ body {
   margin-left: 3%;
 }
 
+.warnings-box {
+  padding: 0px 0px 10px 10px;
+  white-space: pre-wrap;
+  width: 60%;
+}
+
 .network-div {
   height: 90%;
 }

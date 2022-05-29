@@ -45,9 +45,11 @@ app.layout = html.Div([
                                 'physics':{
                                     'repulsion':{
                                         'nodeDistance': 150,
-                                        'springLength': 10,
+                                        'springLength': 50,
+                                        'springConstant': 0.25,
                                     },
                                     'solver':'repulsion',
+                                    'timestep': 1,
                                 },
                                 'edges':{
                                     'arrows':'to',

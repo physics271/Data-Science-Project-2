@@ -96,7 +96,7 @@ app.layout = html.Div([
         ], className='left-div'),
         html.Div([
             html.H2(
-                "Some Random Things",
+                "Cycle Analysis",
                 className='info-title'
             ),
             html.Div(
